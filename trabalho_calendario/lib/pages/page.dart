@@ -12,6 +12,7 @@ class _MyPageState extends State<MyPage> {
   // Variáveis de controle do estado do aplicativo
   String _mesSelecionado = 'Janeiro'; // Mês inicial selecionado
   String _anoSelecionado = '2024'; // Ano inicial selecionado
+  String _anoSelecionadoDropdown = '2024'; // Ano inicial selecionado na caixa de seleção do ano
   late List<String> _diasDoMes; // Lista para armazenar os dias do mês selecionado
   late Map<String, String> _descricoesDosDias; // Mapa para armazenar as descrições de cada dia
 
@@ -88,7 +89,7 @@ class _MyPageState extends State<MyPage> {
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 7,
+        crossAxisCount: 5,
       ),
       itemCount: _diasDoMes.length,
       itemBuilder: (BuildContext context, int index) {
@@ -114,11 +115,11 @@ class _MyPageState extends State<MyPage> {
               _mostrarDescricao(context, dia, descricao); // Mostra a descrição do dia em um diálogo
             },
             child: Container(
-              margin: EdgeInsets.all(4),
-              padding: EdgeInsets.all(8),
+              margin: EdgeInsets.all(3),
+              padding: EdgeInsets.all(4),
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: _isMouseOver && _diaSelecionado == dia ? Colors.blue : Colors.grey, // Cor da borda ao passar o mouse
+                  color: _isMouseOver && _diaSelecionado == dia ? Colors.indigo.shade800 : Colors.grey, // Cor da borda ao passar o mouse
                 ),
                 color: Colors.transparent,
               ),
@@ -133,7 +134,7 @@ class _MyPageState extends State<MyPage> {
                         height: 8,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: Colors.green,
+                          color: Colors.lightBlueAccent,
                         ),
                       ),
                     ),
@@ -144,7 +145,7 @@ class _MyPageState extends State<MyPage> {
                       onTap: () {
                         _mostrarEdicaoDescricao(context, dia); // Mostra o diálogo para editar a descrição do dia
                       },
-                      child: Icon(Icons.edit, size: 18), // Ícone para editar a descrição
+                      child: Icon(Icons.edit, size: 15), // Ícone para editar a descrição
                     ),
                   ),
                   Align(
@@ -228,9 +229,8 @@ class _MyPageState extends State<MyPage> {
     }
   }
 
-  Future<void> _mostrarSelecaoMes(BuildContext context) async {
-    // Mostra um diálogo para selecionar o mês e o ano
-    String? novoMes = await showDialog(
+  void _mostrarSelecaoMes(BuildContext context) {
+    showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -270,10 +270,11 @@ class _MyPageState extends State<MyPage> {
               ),
               SizedBox(height: 8),
               DropdownButton<String>(
-                value: _anoSelecionado,
+                value: _anoSelecionadoDropdown,
                 onChanged: (String? novoValor) {
                   if (novoValor != null) {
                     setState(() {
+                      _anoSelecionadoDropdown = novoValor; // Atualiza o ano selecionado na caixa de seleção do ano
                       _anoSelecionado = novoValor; // Atualiza o ano selecionado
                       _diasDoMes = _calcularDiasDoMes(_mesSelecionado); // Calcula os dias do mês atualizado
                     });
@@ -309,13 +310,6 @@ class _MyPageState extends State<MyPage> {
         );
       },
     );
-
-    if (novoMes != null) {
-      setState(() {
-        _mesSelecionado = novoMes; // Atualiza o mês selecionado após a seleção no diálogo
-        _diasDoMes = _calcularDiasDoMes(_mesSelecionado); // Calcula os dias do novo mês selecionado
-      });
-    }
   }
 }
 
